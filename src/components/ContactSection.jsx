@@ -1,3 +1,5 @@
+import KakaoMap from "./KakaoMap"
+
 function ContactSection() {
   return (
     <div className="flex h-screen items-center bg-[#020b27] text-white">
@@ -22,8 +24,8 @@ function ContactSection() {
         </div>
 
         <div className="rounded-[2rem] bg-white/10 p-5">
-          <div className="flex h-[360px] items-center justify-center rounded-[1.5rem] border border-white/10 bg-white/10 text-white/50">
-            지도 영역
+          <div className="h-[360px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/10">
+            <KakaoMap />
           </div>
         </div>
       </div>
