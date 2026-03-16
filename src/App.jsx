@@ -11,6 +11,7 @@ function App() {
   const [currentView, setCurrentView] = useState(() =>
     window.location.hash === "#company" ? "company" : "home"
   )
+  const [companyTab, setCompanyTab] = useState("overview")
   const mainRef = useRef(null)
 
   const scrollToSection = (id, behavior = "smooth") => {
@@ -37,8 +38,10 @@ function App() {
     })
   }
 
-  const openCompanyPage = () => {
+  const openCompanyPage = (tab = "overview") => {
     sessionStorage.removeItem("pendingHomeSection")
+    sessionStorage.setItem("companyTab", tab)
+    setCompanyTab(tab)
     setCurrentView("company")
     window.location.hash = "company"
   }
@@ -85,6 +88,11 @@ function App() {
       const isCompany = window.location.hash === "#company"
       setCurrentView(isCompany ? "company" : "home")
 
+      if (isCompany) {
+        setCompanyTab(sessionStorage.getItem("companyTab") || "overview")
+        return
+      }
+
       if (!isCompany) {
         const pendingSection =
           sessionStorage.getItem("pendingHomeSection") || "overview"
@@ -111,6 +119,7 @@ function App() {
       <CompanyOverviewPage
         onNavigateHome={openHomePage}
         onNavigateSection={navigateFromCompanyToSection}
+        initialTab={companyTab}
       />
     )
   }
