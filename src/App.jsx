@@ -1,15 +1,43 @@
 import { useEffect, useState } from "react"
 import Header from "./components/Header"
 import HeroSlider from "./components/HeroSlider"
-import CompanyOverviewSection from "./components/CompanyOverviewSection"
+import CompanyOverviewPage from "./components/CompanyOverviewPage"
 import BusinessSection from "./components/BusinessSection"
 import ContactSection from "./components/ContactSection"
 import SideNavigator from "./components/SideNavigator"
 
 function App() {
   const [activeSection, setActiveSection] = useState("overview")
+  const [currentView, setCurrentView] = useState(() =>
+    window.location.hash === "#company" ? "company" : "home"
+  )
+
+  const moveToSection = (id) => {
+    setCurrentView("home")
+
+    requestAnimationFrame(() => {
+      const target = document.getElementById(id)
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" })
+      }
+    })
+  }
+
+  const openCompanyPage = () => {
+    setCurrentView("company")
+    window.history.pushState(null, "", "#company")
+  }
+
+  const openHomePage = () => {
+    setCurrentView("home")
+    window.history.pushState(null, "", window.location.pathname)
+  }
 
   useEffect(() => {
+    if (currentView !== "home") {
+      return undefined
+    }
+
     const sections = document.querySelectorAll("section[data-section]")
 
     const observer = new IntersectionObserver(
@@ -30,11 +58,36 @@ function App() {
     return () => {
       sections.forEach((section) => observer.unobserve(section))
     }
+  }, [currentView])
+
+  useEffect(() => {
+    const syncViewWithUrl = () => {
+      setCurrentView(window.location.hash === "#company" ? "company" : "home")
+    }
+
+    window.addEventListener("popstate", syncViewWithUrl)
+
+    return () => {
+      window.removeEventListener("popstate", syncViewWithUrl)
+    }
   }, [])
+
+  if (currentView === "company") {
+    return (
+      <CompanyOverviewPage
+        onNavigateHome={openHomePage}
+        onNavigateSection={moveToSection}
+      />
+    )
+  }
 
   return (
     <div className="relative h-screen overflow-hidden bg-white text-gray-900">
-      <Header />
+      <Header
+        onLogoClick={openHomePage}
+        onCompanyClick={openCompanyPage}
+        onMenuClick={moveToSection}
+      />
       <SideNavigator activeSection={activeSection} />
 
       <main className="h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth">
@@ -43,15 +96,7 @@ function App() {
           data-section="overview"
           className="h-screen snap-start"
         >
-          <HeroSlider />
-        </section>
-
-        <section
-          id="company"
-          data-section="company"
-          className="min-h-screen snap-start"
-        >
-          <CompanyOverviewSection />
+          <HeroSlider onCompanyClick={openCompanyPage} />
         </section>
 
         <section

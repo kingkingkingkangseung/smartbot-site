@@ -1,9 +1,11 @@
-function Header() {
-  const moveToSection = (id) => {
-    const target = document.getElementById(id)
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" })
+function Header({ onLogoClick, onCompanyClick, onMenuClick }) {
+  const handleMenuClick = (menu) => {
+    if (menu.id === "company") {
+      onCompanyClick()
+      return
     }
+
+    onMenuClick(menu.id)
   }
 
   const menus = [
@@ -19,7 +21,7 @@ function Header() {
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
         <button
           type="button"
-          onClick={() => moveToSection("overview")}
+          onClick={onLogoClick}
           className="text-2xl font-bold text-white"
         >
           Sbot
@@ -31,7 +33,7 @@ function Header() {
               <li key={menu.label}>
                 <button
                   type="button"
-                  onClick={() => moveToSection(menu.id)}
+                  onClick={() => handleMenuClick(menu)}
                   className="cursor-pointer transition hover:text-blue-200"
                 >
                   {menu.label}

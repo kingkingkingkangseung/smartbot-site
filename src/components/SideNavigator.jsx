@@ -8,7 +8,6 @@ function SideNavigator({ activeSection }) {
 
   const sections = [
     { id: "overview", label: "OVERVIEW" },
-    { id: "company", label: "COMPANY" },
     { id: "business", label: "BUSINESS" },
     { id: "contact", label: "CONTACT" },
   ]

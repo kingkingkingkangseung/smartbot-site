@@ -1,11 +1,4 @@
-function HeroSlider() {
-  const moveToCompany = () => {
-    const target = document.getElementById("company")
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" })
-    }
-  }
-
+function HeroSlider({ onCompanyClick }) {
   const moveToBusiness = () => {
     const target = document.getElementById("business")
     if (target) {
@@ -37,7 +30,7 @@ function HeroSlider() {
         <div className="flex items-center justify-center gap-4">
           <button
             type="button"
-            onClick={moveToCompany}
+            onClick={onCompanyClick}
             className="rounded-full bg-white px-8 py-3 text-sm font-semibold text-blue-900 transition hover:bg-blue-100"
           >
             회사소개 보기
