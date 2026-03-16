@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import Header from "./components/Header"
 import HeroSlider from "./components/HeroSlider"
+import CompanyOverviewSection from "./components/CompanyOverviewSection"
 import BusinessSection from "./components/BusinessSection"
 import ContactSection from "./components/ContactSection"
 import SideNavigator from "./components/SideNavigator"
@@ -43,6 +44,14 @@ function App() {
           className="h-screen snap-start"
         >
           <HeroSlider />
+        </section>
+
+        <section
+          id="company"
+          data-section="company"
+          className="min-h-screen snap-start"
+        >
+          <CompanyOverviewSection />
         </section>
 
         <section

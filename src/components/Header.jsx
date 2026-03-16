@@ -1,16 +1,41 @@
 function Header() {
-  const menus = ["회사소개", "로봇제품", "사업소개", "홍보센터", "고객지원"]
+  const moveToSection = (id) => {
+    const target = document.getElementById(id)
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" })
+    }
+  }
+
+  const menus = [
+    { label: "회사소개", id: "company" },
+    { label: "로봇제품", id: "business" },
+    { label: "사업소개", id: "business" },
+    { label: "홍보센터", id: "overview" },
+    { label: "고객지원", id: "contact" },
+  ]
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full border-b border-white/10 bg-[#1e4696]">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-        <div className="text-2xl font-bold text-white">Sbot</div>
+        <button
+          type="button"
+          onClick={() => moveToSection("overview")}
+          className="text-2xl font-bold text-white"
+        >
+          Sbot
+        </button>
 
         <nav>
           <ul className="flex items-center gap-8 text-sm font-medium text-white">
             {menus.map((menu) => (
-              <li key={menu} className="cursor-pointer transition hover:text-blue-200">
-                {menu}
+              <li key={menu.label}>
+                <button
+                  type="button"
+                  onClick={() => moveToSection(menu.id)}
+                  className="cursor-pointer transition hover:text-blue-200"
+                >
+                  {menu.label}
+                </button>
               </li>
             ))}
           </ul>
