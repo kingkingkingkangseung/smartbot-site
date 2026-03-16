@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Header from "./components/Header"
 import HeroSlider from "./components/HeroSlider"
 import CompanyOverviewPage from "./components/CompanyOverviewPage"
@@ -11,14 +11,27 @@ function App() {
   const [currentView, setCurrentView] = useState(() =>
     window.location.hash === "#company" ? "company" : "home"
   )
+  const mainRef = useRef(null)
 
   const moveToSection = (id) => {
+    if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname)
+    }
+
     setCurrentView("home")
+    setActiveSection(id)
 
     requestAnimationFrame(() => {
+      const main = mainRef.current
       const target = document.getElementById(id)
+
+      if (main && id === "overview") {
+        main.scrollTo({ top: 0, behavior: "smooth" })
+        return
+      }
+
       if (target) {
-        target.scrollIntoView({ behavior: "smooth" })
+        target.scrollIntoView({ behavior: "smooth", block: "start" })
       }
     })
   }
@@ -29,8 +42,7 @@ function App() {
   }
 
   const openHomePage = () => {
-    setCurrentView("home")
-    window.history.pushState(null, "", window.location.pathname)
+    moveToSection("overview")
   }
 
   useEffect(() => {
@@ -62,7 +74,19 @@ function App() {
 
   useEffect(() => {
     const syncViewWithUrl = () => {
-      setCurrentView(window.location.hash === "#company" ? "company" : "home")
+      const isCompany = window.location.hash === "#company"
+      setCurrentView(isCompany ? "company" : "home")
+
+      if (!isCompany) {
+        setActiveSection("overview")
+
+        requestAnimationFrame(() => {
+          const main = mainRef.current
+          if (main) {
+            main.scrollTo({ top: 0, behavior: "auto" })
+          }
+        })
+      }
     }
 
     window.addEventListener("popstate", syncViewWithUrl)
@@ -90,7 +114,10 @@ function App() {
       />
       <SideNavigator activeSection={activeSection} />
 
-      <main className="h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth">
+      <main
+        ref={mainRef}
+        className="h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth"
+      >
         <section
           id="overview"
           data-section="overview"
