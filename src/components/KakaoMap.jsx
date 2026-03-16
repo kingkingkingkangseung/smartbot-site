@@ -7,6 +7,12 @@ function KakaoMap() {
 
   useEffect(() => {
     const kakaoKey = import.meta.env.VITE_KAKAO_MAP_KEY
+    const address = "경기도 김포시 김포한강5로 321"
+    const fallbackPosition = {
+      lat: 37.6416,
+      lng: 126.6292,
+    }
+
     if (!kakaoKey) {
       setStatus("error")
       setErrorMessage("VITE_KAKAO_MAP_KEY가 없습니다.")
@@ -31,33 +37,41 @@ function KakaoMap() {
         }
 
         const options = {
-          center: new window.kakao.maps.LatLng(37.6416, 126.6292),
+          center: new window.kakao.maps.LatLng(
+            fallbackPosition.lat,
+            fallbackPosition.lng
+          ),
           level: 3,
         }
 
         const map = new window.kakao.maps.Map(container, options)
-
-        const markerPosition = new window.kakao.maps.LatLng(37.6416, 126.6292)
         const marker = new window.kakao.maps.Marker({
-          position: markerPosition,
+          position: options.center,
         })
         marker.setMap(map)
 
-        const infowindow = new window.kakao.maps.InfoWindow({
-          content: `
-            <div style="
-              padding:8px 12px;
-              font-size:13px;
-              white-space:nowrap;
-            ">
-              스마트봇<br/>
-              경기도 김포시 김포한강5로 321
-            </div>
-          `,
-        })
+        if (!window.kakao.maps.services) {
+          setStatus("ready")
+          return
+        }
 
-        infowindow.open(map, marker)
-        setStatus("ready")
+        const geocoder = new window.kakao.maps.services.Geocoder()
+        geocoder.addressSearch(address, (result, geoStatus) => {
+          if (
+            geoStatus === window.kakao.maps.services.Status.OK &&
+            result.length > 0
+          ) {
+            const position = new window.kakao.maps.LatLng(
+              Number(result[0].y),
+              Number(result[0].x)
+            )
+
+            map.setCenter(position)
+            marker.setPosition(position)
+          }
+
+          setStatus("ready")
+        })
       })
     }
 
@@ -68,7 +82,7 @@ function KakaoMap() {
 
     const script = document.createElement("script")
     script.id = "kakao-map-script"
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false`
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services`
     script.async = true
     script.onload = loadMap
     script.onerror = () => {
