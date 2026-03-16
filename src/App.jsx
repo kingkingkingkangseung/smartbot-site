@@ -13,36 +13,44 @@ function App() {
   )
   const mainRef = useRef(null)
 
-  const moveToSection = (id) => {
-    if (window.location.hash) {
-      window.history.replaceState(null, "", window.location.pathname)
+  const scrollToSection = (id, behavior = "smooth") => {
+    const main = mainRef.current
+    const target = document.getElementById(id)
+
+    if (main && id === "overview") {
+      main.scrollTo({ top: 0, behavior })
+      return
     }
 
+    if (target) {
+      target.scrollIntoView({ behavior, block: "start" })
+    }
+  }
+
+  const moveToSection = (id) => {
     setCurrentView("home")
     setActiveSection(id)
+    sessionStorage.removeItem("pendingHomeSection")
 
     requestAnimationFrame(() => {
-      const main = mainRef.current
-      const target = document.getElementById(id)
-
-      if (main && id === "overview") {
-        main.scrollTo({ top: 0, behavior: "smooth" })
-        return
-      }
-
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "start" })
-      }
+      scrollToSection(id)
     })
   }
 
   const openCompanyPage = () => {
+    sessionStorage.removeItem("pendingHomeSection")
     setCurrentView("company")
-    window.history.pushState(null, "", "#company")
+    window.location.hash = "company"
   }
 
   const openHomePage = () => {
-    moveToSection("overview")
+    sessionStorage.setItem("pendingHomeSection", "overview")
+    window.location.assign(window.location.pathname)
+  }
+
+  const navigateFromCompanyToSection = (id) => {
+    sessionStorage.setItem("pendingHomeSection", id)
+    window.location.assign(window.location.pathname)
   }
 
   useEffect(() => {
@@ -78,21 +86,23 @@ function App() {
       setCurrentView(isCompany ? "company" : "home")
 
       if (!isCompany) {
-        setActiveSection("overview")
+        const pendingSection =
+          sessionStorage.getItem("pendingHomeSection") || "overview"
+
+        setActiveSection(pendingSection)
 
         requestAnimationFrame(() => {
-          const main = mainRef.current
-          if (main) {
-            main.scrollTo({ top: 0, behavior: "auto" })
-          }
+          scrollToSection(pendingSection, "auto")
+          sessionStorage.removeItem("pendingHomeSection")
         })
       }
     }
 
-    window.addEventListener("popstate", syncViewWithUrl)
+    window.addEventListener("hashchange", syncViewWithUrl)
+    syncViewWithUrl()
 
     return () => {
-      window.removeEventListener("popstate", syncViewWithUrl)
+      window.removeEventListener("hashchange", syncViewWithUrl)
     }
   }, [])
 
@@ -100,7 +110,7 @@ function App() {
     return (
       <CompanyOverviewPage
         onNavigateHome={openHomePage}
-        onNavigateSection={moveToSection}
+        onNavigateSection={navigateFromCompanyToSection}
       />
     )
   }
