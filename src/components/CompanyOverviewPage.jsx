@@ -141,8 +141,8 @@ function CompanyOverviewPage({
       <div className="bg-white text-[#30343a]">
         <div className="mx-auto max-w-7xl px-6 py-10 lg:px-10 lg:py-12">
           {activeTab === "overview" ? (
-            <div className="mx-auto max-w-5xl">
-              <h2 className="text-center text-[1.8rem] font-extrabold leading-[1.35] tracking-[-0.03em] text-[#333741] md:text-[2.7rem]">
+            <div className="mx-auto max-w-6xl">
+              <h2 className="text-center text-[1.8rem] font-extrabold leading-[1.3] tracking-[-0.03em] text-[#333741] md:text-[2.45rem]">
                 신뢰를 바탕으로 성장하는{" "}
                 <span className="text-[#4ab5f2]">Sbot, 고객과 함께</span> 더 나은
                 미래를 만들어갑니다.
