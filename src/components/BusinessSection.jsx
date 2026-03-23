@@ -1,7 +1,7 @@
-import faAutomationImage from "../../fa자동화.png"
-import plcProgramImage from "../../plc프로그램.png"
-import articulatedRobotImage from "../../다관절로봇.png"
-import collaborativeRobotImage from "../../협업로봇.png"
+import faAutomationImage from "../assets/fa-automation.png"
+import plcProgramImage from "../assets/plc-program.png"
+import articulatedRobotImage from "../assets/articulated-robot.png"
+import collaborativeRobotImage from "../assets/collaborative-robot.png"
 
 function BusinessSection() {
   const items = [
